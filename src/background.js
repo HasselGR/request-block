@@ -6,10 +6,6 @@ var pattern = []
 
 browser.runtime.onInstalled.addListener(function(){
   browser.storage.sync.set({url:[]});
-  let list = browser.storage.sync.get("url");
-  list.then((data) => {
-    pattern = data.url;
-  })
   var site = browser.tabs.create({
     index:0,
     url: "./options.html",
@@ -19,8 +15,12 @@ browser.runtime.onInstalled.addListener(function(){
 })
 
 
-browser.storage.onChanged.addListener(function(changes){
-  pattern= Object.values(changes)
+browser.storage.onChanged.addListener(function(){
+  let list = browser.storage.sync.get("url")
+  list.then((data) => {
+    pattern = data.url;
+  })
+  console.log("value has changed", pattern);
 })
 
 // cancel function returns an object
@@ -35,6 +35,6 @@ function cancel(requestDetails) {
 
 browser.webRequest.onBeforeRequest.addListener(
     cancel,
-    {urls: pattern.url},
+    {urls: pattern},
     ["blocking"]
 );
